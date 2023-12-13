@@ -21,6 +21,33 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn sum_of_parts(input: &str) -> Result<i32> {
-    todo!("Implement sum_of_parts!")
+fn sum_of_parts(input: &str) -> Result<u32> {
+    todo!()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sum_of_parts() -> Result<()> {
+        let input = r"
+            467..114..
+            ...*......
+            ..35..633.
+            ......#...
+            617*......
+            .....+.58.
+            ..592.....
+            ......755.
+            ...$.*....
+            .664.598..
+        "
+        .trim()
+        .replace([' ', '\n'], "");
+
+        assert_eq!(sum_of_parts(&input)?, 4_361);
+
+        Ok(())
+    }
 }
