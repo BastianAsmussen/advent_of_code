@@ -2,29 +2,33 @@ use crate::Day;
 
 const INPUT: &str = include_str!("input.txt");
 
+fn split_input() -> (Vec<u32>, Vec<u32>) {
+    let (left, right): (Vec<_>, Vec<_>) = INPUT
+        .split_ascii_whitespace()
+        .map(|value| value.parse::<u32>().expect("numeric value"))
+        .enumerate()
+        .partition(|(i, _)| i % 2 == 0);
+
+    // Extract the second element of each tuple into separate vectors.
+    let left: Vec<u32> = left.into_iter().map(|(_, v)| v).collect();
+    let right: Vec<u32> = right.into_iter().map(|(_, v)| v).collect();
+
+    (left, right)
+}
+
 pub struct Day1Part1;
 impl Day for Day1Part1 {
     type Data = u32;
 
     fn run() -> Self::Data {
-        let mut left = Vec::new();
-        let mut right = Vec::new();
-
-        for (i, value) in INPUT.split_ascii_whitespace().enumerate() {
-            let value: u32 = value.parse().expect("numeric value");
-            if i % 2 == 0 {
-                left.push(value);
-            } else {
-                right.push(value);
-            }
-        }
+        let (mut left, mut right) = split_input();
 
         left.sort_unstable();
         right.sort_unstable();
 
         left.iter()
             .zip(right.iter())
-            .map(|(left, right)| left.abs_diff(*right))
+            .map(|(l, r)| l.abs_diff(*r))
             .sum()
     }
 }
@@ -34,20 +38,15 @@ impl Day for Day1Part2 {
     type Data = u32;
 
     fn run() -> Self::Data {
-        let mut left = Vec::new();
-        let mut right = Vec::new();
+        let (left, right) = split_input();
 
-        for (i, value) in INPUT.split_ascii_whitespace().enumerate() {
-            let value: u32 = value.parse().expect("numeric value");
-            if i % 2 == 0 {
-                left.push(value);
-            } else {
-                right.push(value);
-            }
+        let mut frequency = std::collections::HashMap::new();
+        for value in right {
+            *frequency.entry(value).or_insert(0) += 1;
         }
 
-        left.iter()
-            .map(|a| *a * right.iter().filter(|b| a == *b).count() as u32)
+        left.into_iter()
+            .map(|a| a * frequency.get(&a).unwrap_or(&0))
             .sum()
     }
 }
