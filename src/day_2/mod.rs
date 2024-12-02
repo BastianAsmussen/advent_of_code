@@ -8,59 +8,46 @@ enum Trend {
     Decrease,
 }
 
-impl From<bool> for Trend {
-    fn from(value: bool) -> Self {
-        if value {
-            Self::Increase
-        } else {
+impl From<i16> for Trend {
+    fn from(diff: i16) -> Self {
+        if diff > 0 {
             Self::Decrease
+        } else {
+            Self::Increase
         }
     }
 }
 
-pub struct Day2;
-impl Day for Day2 {
-    type Data = i16;
+pub struct Day2Part1;
+impl Day2Part1 {
+    fn is_safe_report(report: &str) -> bool {
+        let levels: Vec<i16> = report
+            .split_ascii_whitespace()
+            .map(|n| n.parse().expect("numeric value"))
+            .collect();
 
-    fn run() -> Self::Data {
-        let mut safe_reports = 0;
-        for report in INPUT.lines() {
-            let levels = report
-                .split_ascii_whitespace()
-                .map(|n| n.parse::<i16>().expect("numeric value"));
-            let trend = {
-                let mut levels = levels.clone().take(2);
-                match (levels.next(), levels.next()) {
-                    (Some(a), Some(b)) => (a - b > 0).into(),
-                    (_, _) => Trend::Increase,
-                }
-            };
-
-            let mut previous_level = None;
-            let mut is_safe = true;
-
-            for level in levels {
-                match previous_level {
-                    Some(n) => {
-                        let diff: i16 = n - level;
-                        if trend != (diff > 0).into() || !(1..=3).contains(&diff.abs()) {
-                            is_safe = false;
-
-                            break;
-                        }
-
-                        previous_level = Some(level);
-                    }
-                    None => previous_level = Some(level),
-                }
-            }
-
-            if is_safe {
-                safe_reports += 1;
-            }
+        // Short reports are considered safe by default.
+        if levels.len() < 2 {
+            return true;
         }
 
-        safe_reports
+        let diffs: Vec<i16> = levels.windows(2).map(|w| w[0] - w[1]).collect();
+        let trend = Trend::from(diffs[0]);
+
+        diffs
+            .iter()
+            .all(|&diff| (1..=3).contains(&diff.abs()) && Trend::from(diff) == trend)
+    }
+}
+
+impl Day for Day2Part1 {
+    type Data = usize;
+
+    fn run() -> Self::Data {
+        INPUT
+            .lines()
+            .filter(|&report| Self::is_safe_report(report))
+            .count()
     }
 }
 
@@ -69,10 +56,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_day2() {
-        let expected = 14;
-        let actual = Day2::run();
+    fn check_part1() {
+        let expected = 246;
+        let actual = Day2Part1::run();
 
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_is_safe_report() {
+        assert!(Day2Part1::is_safe_report("7 6 4 2 1")); // Safe
+        assert!(!Day2Part1::is_safe_report("1 2 7 8 9")); // Unsafe
+        assert!(!Day2Part1::is_safe_report("9 7 6 2 1")); // Unsafe
+        assert!(!Day2Part1::is_safe_report("1 3 2 4 5")); // Unsafe
+        assert!(!Day2Part1::is_safe_report("8 6 4 4 1")); // Unsafe
+        assert!(Day2Part1::is_safe_report("1 3 6 7 9")); // Safe
     }
 }
