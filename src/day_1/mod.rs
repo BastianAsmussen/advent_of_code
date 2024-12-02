@@ -14,7 +14,7 @@ impl Day for Day1Part1 {
         let mut left = Vec::new();
         let mut right = Vec::new();
 
-        for (i, value) in input.split_whitespace().enumerate() {
+        for (i, value) in input.split_ascii_whitespace().enumerate() {
             let value: u32 = value.parse().expect("numeric value");
             if i % 2 == 0 {
                 left.push(value);
@@ -45,7 +45,7 @@ impl Day for Day1Part2 {
         let mut left = Vec::new();
         let mut right = Vec::new();
 
-        for (i, value) in input.split_whitespace().enumerate() {
+        for (i, value) in input.split_ascii_whitespace().enumerate() {
             let value: u32 = value.parse().expect("numeric value");
             if i % 2 == 0 {
                 left.push(value);
