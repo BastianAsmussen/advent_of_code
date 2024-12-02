@@ -7,14 +7,10 @@ impl Day for Day1Part1 {
     type Data = u32;
 
     fn run() -> Self::Data {
-        Self::sanitize(INPUT)
-    }
-
-    fn sanitize(input: &str) -> Self::Data {
         let mut left = Vec::new();
         let mut right = Vec::new();
 
-        for (i, value) in input.split_ascii_whitespace().enumerate() {
+        for (i, value) in INPUT.split_ascii_whitespace().enumerate() {
             let value: u32 = value.parse().expect("numeric value");
             if i % 2 == 0 {
                 left.push(value);
@@ -38,14 +34,10 @@ impl Day for Day1Part2 {
     type Data = u32;
 
     fn run() -> Self::Data {
-        Self::sanitize(INPUT)
-    }
-
-    fn sanitize(input: &str) -> Self::Data {
         let mut left = Vec::new();
         let mut right = Vec::new();
 
-        for (i, value) in input.split_ascii_whitespace().enumerate() {
+        for (i, value) in INPUT.split_ascii_whitespace().enumerate() {
             let value: u32 = value.parse().expect("numeric value");
             if i % 2 == 0 {
                 left.push(value);
