@@ -5,3 +5,8 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+criterion = { version = "0.5.1", features = ["html_reports"] }
+
+[[bench]]
+name = "day1"
+harness = false
