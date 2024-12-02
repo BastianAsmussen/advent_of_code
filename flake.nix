@@ -78,10 +78,19 @@
         # we can block the CI if there are issues here, but not
         # prevent downstream consumers from building our crate by itself.
         crate-clippy = craneLib.cargoClippy (commonArgs
-          // {
+          // (let
+            clippyFlags = builtins.concatStringsSep " " [
+              "-Dwarnings" # Deny all warnings.
+              "-Denum_glob_use" # Disallow use of `use` of all enums.
+              "-Dpedantic" # Enable all pedantic lints.
+              "-Dnursery" # Enable all nursery lints.
+              "-Dunwrap_used" # Disallow use of `unwrap`.
+            ];
+          in {
             inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-          });
+
+            cargoClippyExtraArgs = "--all-targets -- ${clippyFlags}";
+          }));
 
         crate-doc = craneLib.cargoDoc (commonArgs
           // {
@@ -139,6 +148,10 @@
       devShells.default = craneLib.devShell {
         # Inherit inputs from checks.
         checks = self.checks.${system};
+
+        packages = with pkgs; [
+          gnuplot
+        ];
       };
     });
 }
